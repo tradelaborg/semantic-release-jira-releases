@@ -9,7 +9,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "prepublishOnly": "mkdir -p dist && rm -rf dist && tsc -p .",
+    "prepublishOnly": "mkdir -p dist && rm -rf dist",
     "lint": "tslint -p .",
     "build": "tsc -p .",
     "test": " yarn jest"
@@ -26,8 +26,8 @@
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
     "@types/jest": "^26.0.5",
-    "@types/lodash": "^4.14.149",
-    "@types/node": "^13.9.5",
+    "@types/lodash": "^4.17.16",
+    "@types/node": "^22.15.17",
     "@types/p-limit": "^2.2.0",
     "@types/signale": "^1.4.0",
     "jest": "^26.1.0",
