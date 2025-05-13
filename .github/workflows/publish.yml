@@ -15,11 +15,8 @@ jobs:
         with:
           node-version: "20"
           cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --frozen-lockfile
-      - run: yarn test
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          registry: "https://npm.pkg.github.com"
-          package: "./package.json"
-          access: "public"
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
