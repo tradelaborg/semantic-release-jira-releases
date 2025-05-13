@@ -1,6 +1,6 @@
-import JiraClient, { Version } from 'jira-connector';
 import * as _ from 'lodash';
 import pLimit from 'p-limit';
+import { AxiosError } from 'axios';
 
 import { makeClient } from './jira';
 import { DEFAULT_RELEASE_DESCRIPTION_TEMPLATE, DEFAULT_VERSION_TEMPLATE, GenerateNotesContext, PluginConfig } from './types';
@@ -32,8 +32,8 @@ export function getTickets(config: PluginConfig, context: GenerateNotesContext):
   return [...tickets];
 }
 
-async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesContext, jira: JiraClient, projectIdOrKey: string, name: string, description: string): Promise<Version> {
-  const remoteVersions = await jira.project.getVersions({ projectIdOrKey });
+async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesContext, jira: any, projectIdOrKey: string, name: string, description: string) {
+  const remoteVersions = await jira.getVersions(projectIdOrKey);
   context.logger.info(`Looking for version with name '${name}'`);
   const existing = _.find(remoteVersions, { name });
   if (existing) {
@@ -43,18 +43,18 @@ async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesC
 
   context.logger.info(`No existing release found, creating new`);
 
-  let newVersion: Version;
+  let newVersion;
   if (config.dryRun) {
     context.logger.info(`dry-run: making a fake release`);
     newVersion = {
       name,
       id: 'dry_run_id',
-    } as any;
+    };
   } else {
     const descriptionText = description || '';
-    newVersion = await jira.version.createVersion({
+    newVersion = await jira.createVersion({
       name,
-      projectId: projectIdOrKey as any,
+      projectId: projectIdOrKey,
       description: descriptionText,
       released: Boolean(config.released),
       releaseDate: config.setReleaseDate ? (new Date().toISOString()) : undefined,
@@ -65,34 +65,22 @@ async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesC
   return newVersion;
 }
 
-async function editIssueFixVersions(config: PluginConfig, context: GenerateNotesContext, jira: JiraClient, newVersionName: string, releaseVersionId: string, issueKey: string): Promise<void> {
+async function editIssueFixVersions(config: PluginConfig, context: GenerateNotesContext, jira: any, newVersionName: string, releaseVersionId: string, issueKey: string): Promise<void> {
   try {
     context.logger.info(`Adding issue ${issueKey} to '${newVersionName}'`);
     if (!config.dryRun) {
-      await jira.issue.editIssue({
-        issueKey,
-        issue: {
-          update: {
-            fixVersions: [{
-              add: { id: releaseVersionId },
-            }],
-          },
-          properties: undefined as any,
+      await jira.updateIssue(issueKey, {
+        update: {
+          fixVersions: [{
+            add: { id: releaseVersionId },
+          }],
         },
       });
     }
   } catch (err) {
     const allowedStatusCodes = [400, 404];
-    let { statusCode } = err;
-    if (typeof err === 'string') {
-      try {
-        err = JSON.parse(err);
-        statusCode = statusCode || err.statusCode;
-      } catch (err) {
-          // it's not json :shrug:
-      }
-    }
-    if (allowedStatusCodes.indexOf(statusCode) === -1) {
+    const statusCode = err instanceof AxiosError ? err.response?.status : undefined;
+    if (statusCode === undefined || allowedStatusCodes.indexOf(statusCode) === -1) {
       throw err;
     }
     context.logger.error(`Unable to update issue ${issueKey} statusCode: ${statusCode}`);
@@ -114,7 +102,7 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
 
   const jira = makeClient(config, context);
 
-  const project = await jira.project.getProject({ projectIdOrKey: config.projectId });
+  const project = await jira.getProject(config.projectId);
   const releaseVersion = await findOrCreateVersion(config, context, jira, project.id, newVersionName, newVersionDescription);
 
   const concurrentLimit = pLimit(config.networkConcurrency || 10);
