@@ -1,0 +1,25 @@
+name: Publish Package
+on:
+  push:
+    branches: fix-issues
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # allow GITHUB_TOKEN to publish packages
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: ls dist
+      - run: yarn publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

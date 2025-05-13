@@ -28,9 +28,30 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./external-types"
+    ],
+    "types": ["@semantic-release/error"],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    },
+    "preserveSymlinks": true,
+    "isolatedModules": true,
+    "noImplicitOverride": false
   },
   "include": [
     "lib/**/*.ts",
     "external-types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "node_modules/**/*",
+    "**/node_modules/**/*",
+    "dist",
+    "dist/**/*",
+    "**/*.d.ts"
   ]
 }
