@@ -1,6 +1,6 @@
 {
   "name": "@tradelaborg/semantic-release-jira-releases",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "main": "dist/lib/index.js",
   "repository": "https://github.com/tradelaborg/semantic-release-jira-releases",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "prepublishOnly": "mkdir -p dist && rm -rf dist && tsc -p .",
+    "prepublishOnly": "mkdir -p dist && tsc -p .",
     "lint": "tslint -p .",
     "build": "tsc -p .",
     "test": " yarn jest"
