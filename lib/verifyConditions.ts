@@ -7,53 +7,53 @@ export async function verifyConditions(config: PluginConfig, context: PluginCont
   const { networkConcurrency } = config;
 
   if (typeof config.jiraHost !== 'string') {
-    throw new SemanticReleaseError(`config.jiraHost must be a string`);
+    throw new SemanticReleaseError(`config.jiraHost must be a string`, 'EINVALIDJIRAHOST');
   }
   if (typeof config.projectId !== 'string') {
-    throw new SemanticReleaseError(`config.projectId must be a string`);
+    throw new SemanticReleaseError(`config.projectId must be a string`, 'EINVALIDPROJECTID');
   }
 
   if (!config.ticketPrefixes && !config.ticketRegex) {
-    throw new SemanticReleaseError('Either config.ticketPrefixes or config.ticketRegex must be passed');
+    throw new SemanticReleaseError('Either config.ticketPrefixes or config.ticketRegex must be passed', 'EMISSINGTICKETCONFIG');
   }
 
   if (config.ticketPrefixes && config.ticketRegex) {
-    throw new SemanticReleaseError(`config.ticketPrefixes and config.ticketRegex cannot be passed at the same time`);
+    throw new SemanticReleaseError(`config.ticketPrefixes and config.ticketRegex cannot be passed at the same time`, 'ECONFLICTTICKETCONFIG');
   }
 
   if (config.ticketPrefixes) {
     if (!Array.isArray(config.ticketPrefixes)) {
-      throw new SemanticReleaseError(`config.ticketPrefixes must be an array of string`);
+      throw new SemanticReleaseError(`config.ticketPrefixes must be an array of string`, 'EINVALIDTICKETPREFIXES');
     }
     for (const prefix of config.ticketPrefixes) {
       if (typeof prefix !== 'string') {
-        throw new SemanticReleaseError(`config.ticketPrefixes must be an array of string`);
+        throw new SemanticReleaseError(`config.ticketPrefixes must be an array of string`, 'EINVALIDTICKETPREFIXES');
       }
     }
   }
 
   if (config.ticketRegex && typeof config.ticketRegex !== 'string') {
-    throw new SemanticReleaseError(`config.ticketRegex must be an string`);
+    throw new SemanticReleaseError(`config.ticketRegex must be an string`, 'EINVALIDTICKETREGEX');
   }
 
   if (config.releaseNameTemplate) {
     if (typeof config.releaseNameTemplate !== 'string' || config.releaseNameTemplate!.indexOf('${version}') === -1) {
-      throw new SemanticReleaseError('config.releaseNameTemplate must be a string containing ${version}');
+      throw new SemanticReleaseError('config.releaseNameTemplate must be a string containing ${version}', 'EINVALIDRELEASENAMETEMPLATE');
     }
   }
 
   if (config.releaseDescriptionTemplate !== null && config.releaseDescriptionTemplate !== undefined) {
     if (typeof config.releaseDescriptionTemplate !== 'string') {
-      throw new SemanticReleaseError('config.releaseDescriptionTemplate must be a string');
+      throw new SemanticReleaseError('config.releaseDescriptionTemplate must be a string', 'EINVALIDRELEASEDESCTEMPLATE');
     }
   }
 
   if (networkConcurrency && (typeof networkConcurrency !== 'number' || networkConcurrency < 1)) {
-    throw new SemanticReleaseError(`config.networkConcurrency must be an number greater than 0`);
+    throw new SemanticReleaseError(`config.networkConcurrency must be an number greater than 0`, 'EINVALIDNETWORKCONCURRENCY');
   }
 
   if (!context.env.JIRA_AUTH) {
-    throw new SemanticReleaseError(`JIRA_AUTH must be a string`);
+    throw new SemanticReleaseError(`JIRA_AUTH must be a string`, 'EMISSINGJIRAAUTH');
   }
   const jira = makeClient(config, context);
   await jira.project.getProject({ projectIdOrKey: config.projectId });

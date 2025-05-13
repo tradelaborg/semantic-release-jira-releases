@@ -18,12 +18,14 @@ export class JiraClient {
     };
   }
 
-  async getProject(projectIdOrKey: string) {
-    const response = await axios.get(`${this.baseUrl}/project/${projectIdOrKey}`, {
-      headers: this.getHeaders()
-    });
-    return response.data;
-  }
+  project = {
+    getProject: async (params: { projectIdOrKey: string }) => {
+      const response = await axios.get(`${this.baseUrl}/project/${params.projectIdOrKey}`, {
+        headers: this.getHeaders()
+      });
+      return response.data;
+    }
+  };
 
   async getVersions(projectIdOrKey: string) {
     const response = await axios.get(`${this.baseUrl}/project/${projectIdOrKey}/versions`, {

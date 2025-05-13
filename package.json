@@ -9,13 +9,13 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "prepublishOnly": "mkdir -p dist && rm -rf dist",
+    "prepublishOnly": "mkdir -p dist && rm -rf dist && tsc -p",
     "lint": "tslint -p .",
     "build": "tsc -p .",
     "test": " yarn jest"
   },
   "dependencies": {
-    "@semantic-release/error": "^2.2.0",
+    "@semantic-release/error": "^4.0.0",
     "@types/request": "^2.48.4",
     "axios": "^0.27.2",
     "lodash": "^4.17.19",
@@ -27,18 +27,18 @@
     "@babel/preset-typescript": "^7.10.4",
     "@types/jest": "^26.0.5",
     "@types/lodash": "^4.17.16",
-    "@types/node": "^22.15.17",
+    "@types/node": "^16.18.0",
     "@types/p-limit": "^2.2.0",
     "@types/signale": "^1.4.0",
     "jest": "^26.1.0",
     "madge": "^3.8.0",
     "tslint": "^6.1.0",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.8.3"
+    "typescript": "^4.9.5"
   },
   "resolutions": {
     "**/gonzales-pe/minimist": "^1.2.5",
-    "typescript": "^3.8.3",
-    "**/typescript": "^3.8.3"
+    "typescript": "^4.9.5",
+    "**/typescript": "^4.9.5"
   }
 }

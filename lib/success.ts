@@ -102,7 +102,7 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
 
   const jira = makeClient(config, context);
 
-  const project = await jira.getProject(config.projectId);
+  const project = await jira.project.getProject({ projectIdOrKey: config.projectId });
   const releaseVersion = await findOrCreateVersion(config, context, jira, project.id, newVersionName, newVersionDescription);
 
   const concurrentLimit = pLimit(config.networkConcurrency || 10);
