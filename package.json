@@ -1,6 +1,6 @@
 {
   "name": "@tradelaborg/semantic-release-jira-releases",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "main": "dist/lib/index.js",
   "repository": "https://github.com/tradelaborg/semantic-release-jira-releases",
   "license": "MIT",

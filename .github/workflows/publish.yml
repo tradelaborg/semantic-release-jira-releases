@@ -19,6 +19,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --frozen-lockfile
       - run: yarn build
+      - run: ls dist
       - run: yarn publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
